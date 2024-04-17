@@ -1,13 +1,23 @@
 const express = require('express');
-const connectDB = require('./db');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const machineDataRoutes = require('./routes/machineDataRoutes');
 
-// Initialize Express app
 const app = express();
 
-// Connect to MongoDB
-connectDB();
+// Middleware
+app.use(express.json());
+app.use(cors());
 
-// Other middleware and routes
-// ...
+// MongoDB connection
+mongoose.connect('mongodb://localhost:27017/sampledata', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('Failed to connect to MongoDB:', err));
+
+// Use routes
+app.use('/api', machineDataRoutes);
 
 module.exports = app;
