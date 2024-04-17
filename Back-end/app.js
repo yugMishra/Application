@@ -1,23 +1,30 @@
+//app.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const machineDataRoutes = require('./routes/machineDataRoutes');
+const machineDataRoutes = require('./routes/machineDataRoutes'); // Import your routes
 
+// Create an instance of Express
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(cors());
+// Middleware configuration
+app.use(express.json()); // Parse JSON request bodies
+app.use(cors()); // Enable CORS for cross-origin requests
 
-// MongoDB connection
-mongoose.connect('mongodb://localhost:27017/sampledata', {
+// Connect to MongoDB (using an environment variable or fallback)
+const mongoURL = process.env.MONGO_URL || 'mongodb://localhost:27017/sampledata';
+mongoose.connect(mongoURL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Failed to connect to MongoDB:', err));
+.then(() => {
+    console.log('Connected to MongoDB');
+})
+.catch((err) => {
+    console.error('Failed to connect to MongoDB:', err);
+});
 
-// Use routes
+// Mount your routes
 app.use('/api', machineDataRoutes);
 
-module.exports = app;
+module.exports = app; // Export the Express app

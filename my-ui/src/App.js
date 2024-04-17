@@ -4,21 +4,32 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 const App = () => {
+    // Initialize state variables
     const [sampleData, setSampleData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
+            // Set loading state to true
+            setIsLoading(true);
+
             try {
                 const response = await axios.get('/api/sampledata');
                 setSampleData(response.data);
+                // Data has been loaded, set loading state to false
+                setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching sample data:', error);
+                // Handle error and set loading state to false
+                setIsLoading(false);
             }
         };
 
+        // Call the fetchData function to fetch data
         fetchData();
     }, []);
 
+    // Define the Highcharts options object
     const options = {
         chart: {
             type: 'heatmap',
@@ -46,12 +57,17 @@ const App = () => {
         }]
     };
 
+    // Conditional rendering based on loading state
     return (
         <div>
-            <HighchartsReact
-                highcharts={Highcharts}
-                options={options}
-            />
+            {isLoading ? (
+                <p>Loading data...</p> // Display loading message while data is being fetched
+            ) : (
+                <HighchartsReact
+                    highcharts={Highcharts}
+                    options={options}
+                />
+            )}
         </div>
     );
 };
